@@ -55,6 +55,11 @@ project "Chopp"
         "vendor/SFML/install/lib"
     }
 
+    postbuildcommands
+    {
+        ("{COPY} ../vendor/SFML/install/bin/*-d-2.dll " .. "../bin/" .. outputdir)
+    }
+
     filter "configurations:Debug"
         links
         {
@@ -70,9 +75,3 @@ project "Chopp"
             "sfml-window.lib",
             "sfml-system.lib",
         }
-
-    postbuildcommands
-    {
-        ("{COPY} ../vendor/SFML/install/bin/*-d-2.dll " .. "../bin/" .. outputdir)
-    }
-
