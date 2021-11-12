@@ -3,6 +3,10 @@
 *.vcxproj*
 .vs/
 
+# Binaries
+bin/
+bin-int/
+
 # Prerequisites
 *.d
 
