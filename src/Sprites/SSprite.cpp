@@ -4,9 +4,12 @@
 
 namespace cp
 {
-	SSprite::SSprite(std::string imgPath) : SSprite(imgPath, 0, 0)
+	SSprite::SSprite(std::string imgPath)
 	{
-
+		// Randomize positions
+		m_xPos = (rand() % 500) + 500;
+		m_yPos = (rand() % 500) + 500;
+		m_sprite.setPosition(m_xPos, m_yPos);
 	}
 
 
@@ -21,8 +24,7 @@ namespace cp
 	}
 
 
-	void SSprite::update()
+	void SSprite::update(float dt)
 	{
-		std::cout << "SSPrite::update called" << std::endl;
 	}
 }

@@ -11,10 +11,10 @@ namespace cp
 	class SSprite
 	{
 	public:
-		SSprite(const std::string imgPath);
-		SSprite(const std::string imgPath, float xPos, float yPos);
+		SSprite(std::string imgPath);
+		SSprite(std::string imgPath, float xPos, float yPos);
 
-		virtual void update();
+		virtual void update(float dt);
 
 		sf::Sprite getSprite() const { return m_sprite; }
 
