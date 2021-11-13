@@ -15,7 +15,7 @@ std::vector<cp::SSprite *> g_spriteLayers {};
 int main()
 {
 	sf::VideoMode vm(1920, 1080);
-	sf::RenderWindow window(vm, "Chopp!", sf::Style::Default);
+	sf::RenderWindow window(vm, "Chopp!", sf::Style::Fullscreen);
 
 	cp::SSprite bg("../assets/gfx/background.png", 0, 0);
 	g_spriteLayers.push_back(&bg);
@@ -44,12 +44,11 @@ int main()
 	bee.setSpeed((rand() % 200) + 200);
 	g_spriteLayers.push_back(&bee);
 
-	bool beeActive{ false };
-	float beeSpeed{ 0.0f };
-
 	sf::Clock clock;
 	sf::Time dt{};
 	srand((int)time(0));
+
+	bool paused = true;
 
 	while (window.isOpen())
 	{
@@ -57,11 +56,21 @@ int main()
 		{
 			window.close();
 		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
+		{
+			paused = false;
+		}
+
+		// don't process any data is paused, just wait for input
+		if (paused) continue;
+
 		window.clear();
 
 		for (auto sprite : g_spriteLayers)
 		{
 			sprite->update(dt.asSeconds());
+			std::cout << "FPS: " << 1.0f / dt.asSeconds() << std::endl;
 		}
 
 		dt = clock.restart();

@@ -38,7 +38,8 @@ namespace cp
 
 		// reset state of bee
 		m_xPos = 2000;
-		m_yPos = (rand() % 1350) + 500;
+		// Let it render outside screen to emulate randomness in when the bee appears
+		m_yPos = (rand() % 1350) - 500;
 		m_isActive = true;
 	}
 }
