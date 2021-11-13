@@ -46,6 +46,7 @@ project "Chopp"
 
     includedirs
     {
+        "%{prj.location}",
         "vendor/SFML/install/include",
         --"vendor/spdlog/include",
     }
