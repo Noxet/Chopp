@@ -9,6 +9,7 @@
 #include "Sprites/Actor.hpp"
 #include "Sprites/Bee.hpp"
 #include "Sprites/Cloud.hpp"
+#include "Sprites/TimeBar.hpp"
 
 // Store a reference to all layers
 std::vector<cp::SSprite *> g_spriteLayers {};
@@ -44,6 +45,9 @@ int main()
 	bee.setActive(true);
 	bee.setSpeed((rand() % 200) + 200);
 	g_spriteLayers.push_back(&bee);
+
+	cp::TimeBar timeBar;
+	g_spriteLayers.push_back(&timeBar);
 
 	sf::Clock clock;
 	sf::Time dt{};
@@ -97,9 +101,20 @@ int main()
 			for (auto sprite : g_spriteLayers)
 			{
 				sprite->update(dt.asSeconds());
+
 				std::stringstream ss;
 				ss << "Score = " << score;
 				scoreText.setString(ss.str());
+
+				if (timeBar.isGameOver())
+				{
+					paused = true;
+					// Set new text an reposition to center
+					messageText.setString("Out of time!!");
+					textRect = messageText.getLocalBounds();
+					messageText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+					messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+				}
 			}
 		}
 

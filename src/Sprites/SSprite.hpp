@@ -16,7 +16,7 @@ namespace cp
 
 		virtual void update(float dt);
 
-		sf::Sprite getSprite() const { return m_sprite; }
+		virtual const sf::Drawable &getSprite() const { return m_sprite; }
 
 		void setX(float xPos) { m_xPos = xPos; }
 		void setY(float yPos) { m_yPos = yPos; }
