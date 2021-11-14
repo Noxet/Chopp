@@ -1,6 +1,7 @@
 
 #include "chpch.hpp"
 
+#include <sstream>
 #include <vector>
 #include <SFML/Graphics.hpp>
 
@@ -50,6 +51,33 @@ int main()
 
 	bool paused = true;
 
+	int score = 0;
+
+	sf::Font font;
+	font.loadFromFile("../assets/fonts/KOMIKAP_.ttf");
+
+	sf::Text messageText;
+	sf::Text scoreText;
+	messageText.setFont(font);
+	scoreText.setFont(font);
+	messageText.setString("Press Enter to start");
+	scoreText.setString("Score = 0");
+	messageText.setCharacterSize(75);
+	scoreText.setCharacterSize(100);
+	messageText.setFillColor(sf::Color::Red);
+	scoreText.setFillColor(sf::Color::Red);
+
+	// position the text
+	sf::FloatRect textRect = messageText.getLocalBounds();
+	// set origin to the center of the text
+	messageText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+	messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+	scoreText.setPosition(20, 20);
+
+	window.draw(messageText);
+	window.draw(scoreText);
+	window.display();
+
 	while (window.isOpen())
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
@@ -62,15 +90,17 @@ int main()
 			paused = false;
 		}
 
-		// don't process any data is paused, just wait for input
-		if (paused) continue;
-
 		window.clear();
 
-		for (auto sprite : g_spriteLayers)
+		if (!paused)
 		{
-			sprite->update(dt.asSeconds());
-			std::cout << "FPS: " << 1.0f / dt.asSeconds() << std::endl;
+			for (auto sprite : g_spriteLayers)
+			{
+				sprite->update(dt.asSeconds());
+				std::stringstream ss;
+				ss << "Score = " << score;
+				scoreText.setString(ss.str());
+			}
 		}
 
 		dt = clock.restart();
@@ -80,6 +110,11 @@ int main()
 		for (const auto sprite : g_spriteLayers)
 		{
 			window.draw(sprite->getSprite());
+			window.draw(scoreText);
+			if (paused)
+			{
+				window.draw(messageText);
+			}
 		}
 		window.display();
 	}

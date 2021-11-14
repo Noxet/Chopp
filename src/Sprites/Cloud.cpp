@@ -42,5 +42,6 @@ namespace cp
 		m_yPos = rand() % 150;
 		m_xSpeed = rand() % 200;
 		m_isActive = true;
+		m_sprite.setPosition(m_xPos, m_yPos);
 	}
 }
