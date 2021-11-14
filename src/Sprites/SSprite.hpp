@@ -18,8 +18,8 @@ namespace cp
 
 		virtual const sf::Drawable &getSprite() const { return m_sprite; }
 
-		void setX(float xPos) { m_xPos = xPos; }
-		void setY(float yPos) { m_yPos = yPos; }
+		void setX(float xPos);
+		void setY(float yPos);
 		float getX() { return m_xPos; }
 		float getY() { return m_yPos; }
 

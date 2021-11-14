@@ -81,11 +81,44 @@ int main()
 	cp::TimeBar timeBar;
 	g_spriteLayers.push_back(&timeBar);
 
+	// hide it initially
+	cp::SSprite rip("../assets/gfx/rip.png", 600, 2000);
+	g_spriteLayers.push_back(&rip);
+
+	// set up player, starting on the left side
+	sf::Texture playerTexture;
+	playerTexture.loadFromFile("../assets/gfx/player.png");
+	sf::Sprite playerSprite;
+	playerSprite.setTexture(playerTexture);
+	playerSprite.setPosition(580, 720);
+	side playerSide = side::LEFT;
+
+	// set up axe
+	sf::Texture axeTexture;
+	axeTexture.loadFromFile("../assets/gfx/axe.png");
+	sf::Sprite axeSprite;
+	axeSprite.setTexture(axeTexture);
+	axeSprite.setPosition(700, 830);
+	constexpr float AXE_POS_LEFT = 700;
+	constexpr float AXE_POS_RIGHT = 1075;
+
+	// set up the flying log
+	sf::Texture logTexture;
+	logTexture.loadFromFile("../assets/gfx/log.png");
+	sf::Sprite logSprite;
+	logSprite.setTexture(logTexture);
+	logSprite.setPosition(810, 720);
+	bool logActive = false;
+	float logSpeedX = 1000;
+	float logSpeedY = -300;
+
 	sf::Clock clock;
 	sf::Time dt{};
 	srand((int)time(0));
 
 	bool paused = true;
+
+	bool acceptInput{ false };
 
 	int score = 0;
 
@@ -128,14 +161,83 @@ int main()
 			window.close();
 		}
 
+		// start the game
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
 		{
 			paused = false;
+
+			score = 0;
+
+			// reset branches
+			for (auto& branch : branchPositions)
+			{
+				branch = side::NONE;
+			}
+
+			// hide RIP
+			rip.setX(675);
+			rip.setY(2000);
+
+			playerSprite.setPosition(580, 720);
+
+			acceptInput = true;
 		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+		sf::Event event;
+
+		while (window.pollEvent(event))
 		{
-			updateBranches();
+			if (event.type == sf::Event::KeyReleased && !paused)
+			{
+				acceptInput = true;
+
+				// hide the axe
+				axeSprite.setPosition(2000, axeSprite.getPosition().y);
+			}
+		}
+
+		if (acceptInput)
+		{
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+			{
+				playerSide = side::RIGHT;
+				playerSprite.setPosition(1200, 720);
+
+				score++;
+
+				timeBar.addTime(2.0f / score + 0.15f);
+
+				updateBranches();
+
+				axeSprite.setPosition(AXE_POS_RIGHT, axeSprite.getPosition().y);
+
+				// set the log flying to the left
+				logSprite.setPosition(810, 720);
+				logSpeedX = -1000;
+				logActive = true;
+
+				acceptInput = false;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+			{
+				playerSide = side::LEFT;
+				playerSprite.setPosition(580, 720);
+
+				score++;
+
+				timeBar.addTime(2.0f / score + 0.15f);
+
+				updateBranches();
+
+				axeSprite.setPosition(AXE_POS_LEFT, axeSprite.getPosition().y);
+
+				// set the log flying to the left
+				logSprite.setPosition(810, 720);
+				logSpeedX = 1000;
+				logActive = true;
+
+				acceptInput = false;
+			}
 		}
 
 		window.clear();
@@ -177,6 +279,41 @@ int main()
 					}
 				}
 
+				// animate flying logs
+				if (logActive)
+				{
+					float newLogX = logSprite.getPosition().x + logSpeedX * dt.asSeconds();
+					float newLogY = logSprite.getPosition().y + logSpeedY * dt.asSeconds();
+					logSprite.setPosition(newLogX, newLogY);
+
+					if (newLogX < -100 || newLogX > 2000)
+					{
+						// stop animation and reset log position
+						logActive = false;
+						logSprite.setPosition(810, 720);
+					}
+				}
+
+				// handling death. If the last log is on the player's side, we got hit.
+				if (branchPositions[5] == playerSide)
+				{
+					paused = true;
+					acceptInput = false;
+
+					// draw RIP
+					rip.setX(525);
+					rip.setY(760);
+
+					// hide player
+					playerSprite.setPosition(2000, 660);
+
+					// set death text and center it
+					messageText.setString("SQUASHED!!!");
+					textRect = messageText.getLocalBounds();
+					messageText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+					messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+				}
+
 				if (timeBar.isGameOver())
 				{
 					paused = true;
@@ -205,6 +342,10 @@ int main()
 		{
 			window.draw(branch);
 		}
+
+		window.draw(playerSprite);
+		window.draw(axeSprite);
+		window.draw(logSprite);
 
 		// draw score text
 		window.draw(scoreText);

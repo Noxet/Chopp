@@ -29,4 +29,11 @@ namespace cp
 	{
 		return m_timebar;
 	}
+
+
+	void TimeBar::addTime(float time)
+	{
+		m_timeRemaining += time;
+		if (m_timeRemaining >= 6.0f) m_timeRemaining = 6.0f;
+	}
 }
