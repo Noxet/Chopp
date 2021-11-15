@@ -138,9 +138,13 @@ int main()
 	scoreText.setFillColor(sf::Color::White);
 
 	// background for score text
-	sf::RectangleShape scoreRect(scoreText.getLocalBounds().getSize());
+	const float scoreTextX = scoreText.getLocalBounds().getSize().x;
+	const float scoreTextY = scoreText.getLocalBounds().getSize().y;
+	// make the background a bit wider than the text
+	sf::RectangleShape scoreRect(sf::Vector2f(scoreTextX + 40, scoreTextY + 20));
 	scoreRect.setFillColor(sf::Color(0, 0, 0, 96));
-	scoreRect.setPosition(20 + scoreText.getLocalBounds().left, 20 + scoreText.getLocalBounds().top);
+	// start to the far left in x. Center the background in y (subtract 10 since we have 20px more height)
+	scoreRect.setPosition(0, 20 + scoreText.getLocalBounds().top - 10);
 
 	// position the text
 	sf::FloatRect textRect = messageText.getLocalBounds();
@@ -158,9 +162,11 @@ int main()
 	// make sure that al 3 decimals fit, and end at 1900, like score text starts at 20px
 	fpsText.setPosition(1900 - fpsText.getLocalBounds().width, 20);
 	// create background for text, by getting the implicit rectangle from the text
-	sf::RectangleShape fpsRect(fpsText.getLocalBounds().getSize());
+	const float fpsTextX = fpsText.getLocalBounds().getSize().x;
+	const float fpsTextY = fpsText.getLocalBounds().getSize().y;
+	sf::RectangleShape fpsRect(sf::Vector2f(fpsTextX + 40, fpsTextY + 20));
 	fpsRect.setFillColor(sf::Color(0, 0, 0, 96));
-	fpsRect.setPosition(1900 - fpsText.getLocalBounds().width, 20 + fpsText.getLocalBounds().top);
+	fpsRect.setPosition(1900 - fpsText.getLocalBounds().width - 20, 20 + fpsText.getLocalBounds().top - 10);
 
 	// load branch texture
 	sf::Texture branchTexture;
@@ -302,6 +308,8 @@ int main()
 				std::stringstream ss;
 				ss << "Score = " << score;
 				scoreText.setString(ss.str());
+				// update the background to cover the text
+				scoreRect.setSize(sf::Vector2f(scoreText.getLocalBounds().width + 40, scoreRect.getSize().y));
 
 				// update the branches
 				for (int i = 0; i < NUM_BRANCHES; ++i)
