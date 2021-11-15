@@ -135,7 +135,12 @@ int main()
 	messageText.setCharacterSize(75);
 	scoreText.setCharacterSize(100);
 	messageText.setFillColor(sf::Color::Red);
-	scoreText.setFillColor(sf::Color::Red);
+	scoreText.setFillColor(sf::Color::White);
+
+	// background for score text
+	sf::RectangleShape scoreRect(scoreText.getLocalBounds().getSize());
+	scoreRect.setFillColor(sf::Color(0, 0, 0, 96));
+	scoreRect.setPosition(20 + scoreText.getLocalBounds().left, 20 + scoreText.getLocalBounds().top);
 
 	// position the text
 	sf::FloatRect textRect = messageText.getLocalBounds();
@@ -144,6 +149,20 @@ int main()
 	messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
 	scoreText.setPosition(20, 20);
 
+	// setup FPS counter
+	sf::Text fpsText;
+	fpsText.setFont(font);
+	fpsText.setString("FPS = 0000");
+	fpsText.setCharacterSize(100);
+	fpsText.setFillColor(sf::Color::White);
+	// make sure that al 3 decimals fit, and end at 1900, like score text starts at 20px
+	fpsText.setPosition(1900 - fpsText.getLocalBounds().width, 20);
+	// create background for text, by getting the implicit rectangle from the text
+	sf::RectangleShape fpsRect(fpsText.getLocalBounds().getSize());
+	fpsRect.setFillColor(sf::Color(0, 0, 0, 96));
+	fpsRect.setPosition(1900 - fpsText.getLocalBounds().width, 20 + fpsText.getLocalBounds().top);
+
+	// load branch texture
 	sf::Texture branchTexture;
 	branchTexture.loadFromFile("../assets/gfx/branch.png");
 
@@ -175,6 +194,9 @@ int main()
 	ootBuffer.loadFromFile("../assets/sfx/out_of_time.wav");
 	sf::Sound oot;
 	oot.setBuffer(ootBuffer);
+
+	// only update FPS counter each second
+	float fpsCount{ 0 };
 
 	while (window.isOpen())
 	{
@@ -357,6 +379,16 @@ int main()
 			}
 		}
 
+		fpsCount += dt.asSeconds();
+
+		if (fpsCount >= 1)
+		{
+			std::stringstream ss;
+			ss << "FPS = " << static_cast<int>(1.0f / dt.asSeconds());
+			fpsText.setString(ss.str());
+			fpsCount = 0;
+		}
+
 		dt = clock.restart();
 
 		/*
@@ -379,7 +411,12 @@ int main()
 		window.draw(logSprite);
 
 		// draw score text
+		window.draw(scoreRect);
 		window.draw(scoreText);
+
+		// draw FPS counter
+		window.draw(fpsRect);
+		window.draw(fpsText);
 
 		if (paused)
 		{
