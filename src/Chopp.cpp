@@ -4,6 +4,7 @@
 #include <sstream>
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 #include "Sprites/SSprite.hpp"
 #include "Sprites/Actor.hpp"
@@ -26,23 +27,23 @@ void updateBranches()
 	for (int i = NUM_BRANCHES - 1; i > 0; --i)
 	{
 		branchPositions[i] = branchPositions[i - 1];
+	}
 
-		// we want more empty spaces than branches
-		int r = rand() % 5;
-		switch (r)
-		{
-		case 0:
-			branchPositions[0] = side::LEFT;
-			break;
+	// we want more empty spaces than branches
+	int r = rand() % 5;
+	switch (r)
+	{
+	case 0:
+		branchPositions[0] = side::LEFT;
+		break;
 
-		case 1:
-			branchPositions[0] = side::RIGHT;
-			break;
+	case 1:
+		branchPositions[0] = side::RIGHT;
+		break;
 
-		default:
-			branchPositions[0] = side::NONE;
-			break;
-		}
+	default:
+		branchPositions[0] = side::NONE;
+		break;
 	}
 }
 
@@ -146,6 +147,7 @@ int main()
 	sf::Texture branchTexture;
 	branchTexture.loadFromFile("../assets/gfx/branch.png");
 
+	// initialize branches and hide
 	for (int i = 0; i < NUM_BRANCHES; ++i)
 	{
 		branches[i].setTexture(branchTexture);
@@ -153,6 +155,26 @@ int main()
 		// set the origin to center
 		branches[i].setOrigin(220, 20);
 	}
+
+	// setup sound
+	
+	// chopping sound
+	sf::SoundBuffer chopBuffer;
+	chopBuffer.loadFromFile("../assets/sfx/chop.wav");
+	sf::Sound chop;
+	chop.setBuffer(chopBuffer);
+
+	// death sound
+	sf::SoundBuffer deathBuffer;
+	deathBuffer.loadFromFile("../assets/sfx/death.wav");
+	sf::Sound death;
+	death.setBuffer(deathBuffer);
+
+	// out of time sound
+	sf::SoundBuffer ootBuffer;
+	ootBuffer.loadFromFile("../assets/sfx/out_of_time.wav");
+	sf::Sound oot;
+	oot.setBuffer(ootBuffer);
 
 	while (window.isOpen())
 	{
@@ -211,10 +233,12 @@ int main()
 
 				axeSprite.setPosition(AXE_POS_RIGHT, axeSprite.getPosition().y);
 
-				// set the log flying to the left
+				// set the log flying to the right
 				logSprite.setPosition(810, 720);
 				logSpeedX = -1000;
 				logActive = true;
+
+				chop.play();
 
 				acceptInput = false;
 			}
@@ -235,6 +259,8 @@ int main()
 				logSprite.setPosition(810, 720);
 				logSpeedX = 1000;
 				logActive = true;
+
+				chop.play();
 
 				acceptInput = false;
 			}
@@ -306,12 +332,15 @@ int main()
 
 					// hide player
 					playerSprite.setPosition(2000, 660);
+					axeSprite.setPosition(2000, 600);
 
 					// set death text and center it
 					messageText.setString("SQUASHED!!!");
 					textRect = messageText.getLocalBounds();
 					messageText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
 					messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+
+					death.play();
 				}
 
 				if (timeBar.isGameOver())
@@ -322,6 +351,8 @@ int main()
 					textRect = messageText.getLocalBounds();
 					messageText.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
 					messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+
+					oot.play();
 				}
 			}
 		}

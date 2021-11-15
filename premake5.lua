@@ -58,7 +58,7 @@ project "Chopp"
 
     postbuildcommands
     {
-        ("{COPY} ../vendor/SFML/install/bin/*-d-2.dll " .. "../bin/" .. outputdir)
+        ("{COPY} ../vendor/SFML/install/bin/*.dll " .. "../bin/" .. outputdir)
     }
 
     filter "configurations:Debug"
@@ -67,6 +67,9 @@ project "Chopp"
             "sfml-graphics-d.lib",
             "sfml-window-d.lib",
             "sfml-system-d.lib",
+            -- audio stuff
+            "sfml-audio-d.lib",
+            "openal32.lib",
         }
 
     filter "configurations:Release"
@@ -75,4 +78,7 @@ project "Chopp"
             "sfml-graphics.lib",
             "sfml-window.lib",
             "sfml-system.lib",
+            -- audio stuff
+            "sfml-audio.lib",
+            "openal32.lib",
         }
