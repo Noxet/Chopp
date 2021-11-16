@@ -15,9 +15,10 @@ namespace cp
 		bool isGameOver() const { return m_timeRemaining <= 0; }
 
 		void addTime(float time);
+		void reset();
 
 	private:
-		sf::RectangleShape m_timebar;
+		sf::RectangleShape m_timeBar;
 		float m_startWidth{ 400 };
 		float m_height{ 80 };
 		float m_timeRemaining{ 6.0f };
