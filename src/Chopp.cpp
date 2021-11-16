@@ -255,7 +255,7 @@ int main()
 
 				score++;
 
-				timeBar.addTime(2.0f / score + 0.15f);
+				timeBar.addTime(2.0f / (score + 1) + 0.15f);
 
 				updateBranches();
 
@@ -277,7 +277,7 @@ int main()
 
 				score++;
 
-				timeBar.addTime(2.0f / score + 0.15f);
+				timeBar.addTime(2.0f / (score + 1) + 0.15f);
 
 				updateBranches();
 
